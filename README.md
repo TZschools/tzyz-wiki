@@ -2,7 +2,7 @@
 
 start
 
-Index
+index
 
 * 目录
   * [前言](/docs/前言.md)
