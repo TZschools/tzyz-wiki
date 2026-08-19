@@ -60,6 +60,73 @@
     section.cover li {
       text-indent: 0;
     }
+    /* 页面底部分页导航：左右两块卡片式 */
+    .markdown-section .page-nav {
+      display: flex;
+      gap: 16px;
+      margin-top: 2.5em;
+      padding-top: 1.75em;
+      border-top: 1px solid #eaecef;
+    }
+    .markdown-section .page-nav a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 14px 18px;
+      border: 1px solid #eaecef;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #303133;
+      background: #fafbfc;
+      transition: all 0.2s ease;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .markdown-section .page-nav .prev {
+      text-align: left;
+      margin-right: auto;
+    }
+    .markdown-section .page-nav .next {
+      text-align: right;
+      margin-left: auto;
+    }
+    .markdown-section .page-nav .label {
+      font-size: 0.8rem;
+      color: #909399;
+      margin-bottom: 4px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+    .markdown-section .page-nav .title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #42b983;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .markdown-section .page-nav a:hover {
+      border-color: #42b983;
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(66, 185, 131, 0.15);
+      transform: translateY(-1px);
+    }
+    .markdown-section .page-nav a:hover .title {
+      color: #2c8f5e;
+    }
+    /* 移动端让 prev/next 上下排，避免文字截断 */
+    @media (max-width: 480px) {
+      .markdown-section .page-nav {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .markdown-section .page-nav .prev,
+      .markdown-section .page-nav .next {
+        text-align: left;
+        margin: 0;
+      }
+    }
   </style>
 
   <link rel="icon" href="./favicon.ico" />
@@ -117,7 +184,66 @@
     }
   </script>
 
-  <!-- Docsify v4 -->
+  <!-- 页面分页导航插件：解析 @prev: / @next: 标记 -->
+  <script>
+    window.$docsify = window.$docsify || {};
+    $docsify.plugins = $docsify.plugins || [];
+    $docsify.plugins.push(function pageNavPlugin(hook) {
+      // 文件名 → 显示标题 的映射表。查不到就用文件名（去掉 .md）当作标题。
+      var PAGE_INDEX = {
+        "前言.md": "前言",
+        "一、初入一中.md": "一、初入一中：核心概览",
+        "二、建筑篇.md": "二、建筑篇",
+        "三、作息.md": "三、作息篇",
+        "四、食堂及周边.md": "四、食堂与校外就餐",
+        "五、宿舍生活篇.md": "五、宿舍生活篇",
+        "六、师生篇.md": "六、师生相处篇",
+        "七、校园纪律.md": "七、校园纪律、违禁品及风险提醒",
+        "八、学习经验.md": "八、学习经验",
+        "九、军训救命指南.md": "九、军训救命指南",
+        "十、常见问题.md": "十、常见问题",
+        "十一、社团篇.md": "十一、社团篇",
+        "后记.md": "后记"
+      };
+
+      hook.afterEach(function(html) {
+        // 匹配 <!-- @prev: FILE --> 和 <!-- @next: FILE -->
+        var prevMatch = html.match(/<!--\s*@prev:\s*([^>]+?)\s*-->/);
+        var nextMatch = html.match(/<!--\s*@next:\s*([^>]+?)\s*-->/);
+        if (!prevMatch && !nextMatch) return html;
+
+        var prevFile = prevMatch ? prevMatch[1].trim() : null;
+        var nextFile = nextMatch ? nextMatch[1].trim() : null;
+        function titleOf(f) {
+          if (!f) return null;
+          return PAGE_INDEX[f] || f.replace(/\.md$/, "");
+        }
+        var prevTitle = titleOf(prevFile);
+        var nextTitle = titleOf(nextFile);
+
+        // 重点：href 用 #/docs/... 哈希路由，docsify 才能拦截跳转
+        var nav = '<div class="page-nav">';
+        if (prevFile) {
+          nav += '<a class="prev" href="#/docs/' + prevFile + '?id=top">'
+               + '<span class="label">上一篇</span>'
+               + '<span class="title">' + prevTitle + '</span></a>';
+        }
+        if (nextFile) {
+          nav += '<a class="next" href="#/docs/' + nextFile + '?id=top">'
+               + '<span class="label">下一篇</span>'
+               + '<span class="title">' + nextTitle + '</span></a>';
+        }
+        nav += '</div>';
+
+        // 删掉标记注释，文章末尾插入导航块
+        html = html.replace(/<!--\s*@prev:\s*[^>]+\s*-->/g, '');
+        html = html.replace(/<!--\s*@next:\s*[^>]+\s*-->/g, '');
+        return html.trimEnd() + '\n\n' + nav;
+      });
+    });
+  </script>
+
+    <!-- Docsify v4 -->
   <script src="//fastly.jsdelivr.net/npm/docsify@4"></script>
 
   <!-- emoji表情支持 -->
