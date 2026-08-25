@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <title>滕州一中校园指南</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="滕州一中，滕州一中一命速通指南，滕州一中指南" />
+  <meta name="description" content="滕州一中，滕州市第一中学，滕州一中校园百科，滕州一中一命速通指南，滕州一中指南" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//fastly.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
 
@@ -209,8 +209,8 @@
 
       hook.afterEach(function(html) {
         // 匹配 <!-- @prev: FILE --> 和 <!-- @next: FILE -->
-        var prevMatch = html.match(/<!--\s*@prev:\s*([^>]+?)\s*-->/);
-        var nextMatch = html.match(/<!--\s*@next:\s*([^>]+?)\s*-->/);
+        var prevMatch = html.match(/\x3C!--\s*@prev:\s*([^>]+?)\s*-->/);
+        var nextMatch = html.match(/\x3C!--\s*@next:\s*([^>]+?)\s*-->/);
         if (!prevMatch && !nextMatch) return html;
 
         var prevFile = prevMatch ? prevMatch[1].trim() : null;
@@ -237,9 +237,9 @@
         nav += '</div>';
 
         // 删掉标记注释，文章末尾插入导航块
-        html = html.replace(/<!--\s*@prev:\s*[^>]+\s*-->/g, '');
-        html = html.replace(/<!--\s*@next:\s*[^>]+\s*-->/g, '');
-        return html.trimEnd() + '\n\n' + nav;
+        html = html.replace(/\x3C!--\s*@prev:\s*[^>]+\s*-->/g, '');
+        html = html.replace(/\x3C!--\s*@next:\s*[^>]+\s*-->/g, '');
+        return html.replace(/\s+$/, '') + '\n\n' + nav;
       });
     });
   </script>

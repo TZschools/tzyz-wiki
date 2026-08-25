@@ -17,10 +17,10 @@
   
    **投稿方式：**
 
-   1. 由一中万能墙代为转达：直接私信发送给万能墙即可，发送内容需包含署名（可非真名）、所投稿区域的大标题及大标题下的小标题。
+   1. 由一中万能墙代为转达：直接私信发送给万能墙即可，发送内容请尽量包含署名（可非真名）、所投稿区域的章节及章节下的小节。
    > 滕州一中万能墙 <QQ: 717077565>
 
-   2. 直接发送至邮箱：将稿件发送至 [thanatosxy@foxmail.com](mailto:thanatosxy@foxmail.com) ，邮件标题需注明署名（可非真名）、所投稿区域的大标题及大标题下的小标题。
+   2. 直接发送至邮箱：将稿件发送至 [thanatosxy@foxmail.com](mailto:thanatosxy@foxmail.com) ，正文请尽量包含署名（可非真名）、所投稿区域的章节及章节下的小节。
    
    3. 将稿件提交至[Github仓库](https://github.com/TZschools/tzyz-wiki)的issue区
 
