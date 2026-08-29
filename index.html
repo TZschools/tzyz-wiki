@@ -222,24 +222,36 @@
         var prevTitle = titleOf(prevFile);
         var nextTitle = titleOf(nextFile);
 
-        // 重点：href 用 #/docs/... 哈希路由，docsify 才能拦截跳转
-        var nav = '<div class="page-nav">';
+        // 构造单侧链接
+        function aTag(side, file, title) {
+          var label = side === 'prev' ? '上一篇' : '下一篇';
+          return '<a class="' + side + '" href="#/docs/' + file + '?id=top">'
+               + '<span class="label">' + label + '</span>'
+               + '<span class="title">' + title + '</span></a>';
+        }
+
+        // 相邻模式：两个标记紧挨着（中间只有空白），合并替换为单个 nav 容器（左右分布）
+        // 标记位置 = 最终渲染位置，原地替换，保留上下文结构
+        var adjacentRe = /\x3C!--\s*@prev:\s*[^>]+\s*-->\s*\x3C!--\s*@next:\s*[^>]+\s*-->/;
+        if (prevFile && nextFile && adjacentRe.test(html)) {
+          var nav = '<div class="page-nav">'
+                  + aTag('prev', prevFile, prevTitle)
+                  + aTag('next', nextFile, nextTitle)
+                  + '</div>';
+          html = html.replace(adjacentRe, nav);
+          return html;
+        }
+
+        // 不相邻或只有单侧：分别原地替换为独立 nav 块
         if (prevFile) {
-          nav += '<a class="prev" href="#/docs/' + prevFile + '?id=top">'
-               + '<span class="label">上一篇</span>'
-               + '<span class="title">' + prevTitle + '</span></a>';
+          html = html.replace(/\x3C!--\s*@prev:\s*[^>]+\s*-->/,
+            '<div class="page-nav">' + aTag('prev', prevFile, prevTitle) + '</div>');
         }
         if (nextFile) {
-          nav += '<a class="next" href="#/docs/' + nextFile + '?id=top">'
-               + '<span class="label">下一篇</span>'
-               + '<span class="title">' + nextTitle + '</span></a>';
+          html = html.replace(/\x3C!--\s*@next:\s*[^>]+\s*-->/,
+            '<div class="page-nav">' + aTag('next', nextFile, nextTitle) + '</div>');
         }
-        nav += '</div>';
-
-        // 删掉标记注释，文章末尾插入导航块
-        html = html.replace(/\x3C!--\s*@prev:\s*[^>]+\s*-->/g, '');
-        html = html.replace(/\x3C!--\s*@next:\s*[^>]+\s*-->/g, '');
-        return html.replace(/\s+$/, '') + '\n\n' + nav;
+        return html;
       });
     });
   </script>
